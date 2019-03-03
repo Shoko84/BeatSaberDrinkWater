@@ -80,7 +80,7 @@ namespace BeatSaberDrinkWater
                         _TextContent.alignment = TextAlignmentOptions.Center;
                         _TextContent.fontSize = 5;
                         _TextContent.enableWordWrapping = false;
-                        _ContinueButton = _CustomViewController.CreateUIButton("CreditsButton", new Vector2(0, -20f), new Vector2(30f, 10f),
+                        _ContinueButton = _CustomViewController.CreateUIButton("CreditsButton", new Vector2(0, -20f), new Vector2(37f, 10f),
                                                                                null, "I understand!");
                         _ContinueButton.ToggleWordWrapping(false);
                         _ContinueButton.SetButtonTextSize(4);
@@ -120,8 +120,26 @@ namespace BeatSaberDrinkWater
                 //ReflectionUtil.GetPrivateField<ResultsViewController>(_ResultsViewController, "")
                 _CurrentPanelMode = mode;
                 _CustomMenu.Present();
+                StartCoroutine(MakeButtonInteractableDelay(_ContinueButton, 5f, 0.1f, "0.0"));
                 DisplayPanelNeeded = false;
             }
+        }
+
+        public IEnumerator MakeButtonInteractableDelay(Button button, float duration, float delayStep = 1f, string format = "0", bool showInButton = true)
+        {
+            string buttonTextContent = button.GetComponentInChildren<TextMeshProUGUI>().text;
+            if (showInButton)
+                button.SetButtonText(buttonTextContent + " (" + duration.ToString(format) + ")");
+            button.interactable = false;
+            while (duration > 0)
+            {
+                yield return new WaitForSeconds(delayStep);
+                duration -= delayStep;
+                if (duration < 0) duration = 0;
+                if (showInButton)
+                    button.SetButtonText(buttonTextContent + ((duration > 0) ? (" (" + duration.ToString(format) + ")") : ("")));
+            }
+            button.interactable = true;
         }
 
         private void SetupUI()

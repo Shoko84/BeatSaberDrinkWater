@@ -15,7 +15,7 @@ namespace BeatSaberDrinkWater
         public void OnApplicationStart()
         {
             TimeSpentClock.OnLoad();
-            IngameTimeSpentClock.OnLoad();
+            IngameInformationsCounter.OnLoad();
             SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             PluginConfig.LoadOrCreateConfig();
@@ -32,13 +32,30 @@ namespace BeatSaberDrinkWater
 
         private void SceneManagerOnActiveSceneChanged(Scene from, Scene to)
         {
-            if (SceneUtils.IsGameScene(from) && SceneUtils.IsMenuScene(to))
+            if (from.name == "EmptyTransition" && SceneUtils.IsMenuScene(to))
             {
                 try
                 {
                     SettingsUI.Instance.OnLoad();
                     if (PluginConfig.EnablePlugin)
                         DrinkWaterPanel.Instance.OnLoad();
+                    else if (DrinkWaterPanel.Instance != null)
+                    {
+                        //Clean gameobjects created by the plugin
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception on scene change: " + e);
+                }
+            }
+
+            if (SceneUtils.IsGameScene(from) && SceneUtils.IsMenuScene(to))
+            {
+                try
+                {
+                    if (PluginConfig.EnablePlugin)
+                        DrinkWaterPanel.Instance.OnMapFinished();
                 }
                 catch (Exception e)
                 {

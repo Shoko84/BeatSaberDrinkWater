@@ -44,6 +44,21 @@ namespace BeatSaberDrinkWater.Settings
             var enablePlugin = customExitSubMenu.AddBool("Enable", "Enable or not the plugin");
             enablePlugin.GetValue += delegate { return PluginConfig.EnablePlugin; };
             enablePlugin.SetValue += delegate (bool value) { PluginConfig.EnablePlugin = value; PluginConfig.SaveConfig(); };
+            var waitDuration = customExitSubMenu.AddInt("Wait duration", "Waiting time in seconds before skipping the warning", 0, 30, 1);
+            waitDuration.GetValue += delegate { return PluginConfig.WaitDuration; };
+            waitDuration.SetValue += delegate (int value) { PluginConfig.WaitDuration = value; PluginConfig.SaveConfig(); };
+            var enableByPlaytime = customExitSubMenu.AddBool("Enable by playtime", "Enable the plugin depending of the playtime");
+            enableByPlaytime.GetValue += delegate { return PluginConfig.EnableByPlaytime; };
+            enableByPlaytime.SetValue += delegate (bool value) { PluginConfig.EnableByPlaytime = value; PluginConfig.SaveConfig(); };
+            var enableByPlaycount = customExitSubMenu.AddBool("Enable by play count", "Enable the plugin depending of the play count");
+            enableByPlaycount.GetValue += delegate { return PluginConfig.EnableByPlaycount; };
+            enableByPlaycount.SetValue += delegate (bool value) { PluginConfig.EnableByPlaycount = value; PluginConfig.SaveConfig(); };
+            var playtimeBeforeWarning = customExitSubMenu.AddInt("Playtime warning", "How much playtime before being warned in minutes ('Enable by playtime' must be true)", 1, 30, 1);
+            playtimeBeforeWarning.GetValue += delegate { return PluginConfig.PlaytimeBeforeWarning; };
+            playtimeBeforeWarning.SetValue += delegate (int value) { PluginConfig.PlaytimeBeforeWarning = value; PluginConfig.SaveConfig(); };
+            var playcountBeforeWarning = customExitSubMenu.AddInt("Playcount warning", "How much play count before being warned ('Enable by play count' must be true)", 1, 5, 1);
+            playcountBeforeWarning.GetValue += delegate { return PluginConfig.PlaycountBeforeWarning; };
+            playcountBeforeWarning.SetValue += delegate (int value) { PluginConfig.PlaycountBeforeWarning = value; PluginConfig.SaveConfig(); };
 
             Initialized = true;
         }

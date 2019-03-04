@@ -1,4 +1,5 @@
-﻿using BeatSaberDrinkWater.Utilities;
+﻿using BeatSaberDrinkWater.Settings;
+using BeatSaberDrinkWater.Utilities;
 using CustomUI.BeatSaber;
 using System;
 using System.Collections;
@@ -21,8 +22,8 @@ namespace BeatSaberDrinkWater
             RESTART = 1
         }
 
-        private CustomMenu _CustomMenu;
-        private CustomViewController _CustomViewController;
+        private CustomMenu _CustomMenu = null;
+        private CustomViewController _CustomViewController = null;
         private SoloFreePlayFlowCoordinator _Sfpfc;
         private ResultsViewController _ResultsViewController;
 
@@ -57,11 +58,31 @@ namespace BeatSaberDrinkWater
             _Sfpfc = Resources.FindObjectsOfTypeAll<SoloFreePlayFlowCoordinator>().FirstOrDefault();
             if (_Sfpfc != null)
                 _ResultsViewController = ReflectionUtil.GetPrivateField<ResultsViewController>(_Sfpfc, "_resultsViewController");
-            SetupUI();
+            _SetupUI();
+        }
+
+        public void OnMapFinished()
+        {
+            //TODO: Remove
+            //DisplayPanelNeeded = true;
+            IngameInformationsCounter.Instance.PlayerHasFinishedMap();
+            if (PluginConfig.EnableByPlaytime && IngameInformationsCounter.Instance.IngameTimeSpent.TotalMinutes >= PluginConfig.PlaytimeBeforeWarning)
+            {
+                IngameInformationsCounter.Instance.ResetTimeSpent();
+                DisplayPanelNeeded = true;
+            }
+            else if (PluginConfig.EnableByPlaycount && IngameInformationsCounter.Instance.CurrentPlaycount >= PluginConfig.PlaycountBeforeWarning)
+            {
+                IngameInformationsCounter.Instance.ResetPlaycount();
+                DisplayPanelNeeded = true;
+            }
         }
 
         private void _SetupDrinkWaterPanel()
         {
+            if (_CustomMenu != null && _CustomViewController != null)
+                return;
+
             _CustomMenu = BeatSaberUI.CreateCustomMenu<CustomMenu>("Drink some water!");
             _CustomViewController = BeatSaberUI.CreateViewController<CustomViewController>();
 
@@ -71,11 +92,6 @@ namespace BeatSaberDrinkWater
                 {
                     if (firstActivation && type == VRUI.VRUIViewController.ActivationType.AddedToHierarchy)
                     {
-                        //if (_ResultsViewController != null)
-                        //{
-                        //    //_ResultsViewController.transform.Find("BottomPanel/Buttons/Restart");
-                        //    //_ResultsViewController.transform.Find("BottomPanel/Buttons/OK").GetComponent<Button>().onClick.AddListener(delegate () { ShowDrinkWaterPanel(); });
-                        //}
                         _TextContent = _CustomViewController.CreateText("", new Vector2(0, 20f));
                         _TextContent.alignment = TextAlignmentOptions.Center;
                         _TextContent.fontSize = 5;
@@ -86,26 +102,28 @@ namespace BeatSaberDrinkWater
                         _ContinueButton.SetButtonTextSize(4);
                         _ContinueButton.onClick.AddListener(delegate () { _CustomMenu.Dismiss(); });
 
-                        switch (_CurrentPanelMode)
-                        {
-                            case DrinkWaterPanelMode.CONTINUE:
-                                _TextContent.text = "Before browsing some new songs, drink some water, that's important for your body!";
-                                //var a = ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent");
-                                //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.ContinueButtonPressed(); });
-                                //_ContinueButton.onClick.AddListener(delegate () {
-                                //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "continueButtonPressedEvent")?.Invoke(_ResultsViewController);
-                                //});
-                                break;
-                            case DrinkWaterPanelMode.RESTART:
-                                _TextContent.text = "Before restarting this song, drink some water, that's important for your body!";
-                                //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.RestartButtonPressed(); });
-                                //_ContinueButton.onClick.AddListener(delegate () {
-                                //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent")?.Invoke(_ResultsViewController);
-                                //});
-                                break;
-                            default:
-                                break;
-                        }
+                        _RefreshTextContent(_CurrentPanelMode);
+
+                        //switch (_CurrentPanelMode)
+                        //{
+                        //    case DrinkWaterPanelMode.CONTINUE:
+                        //        _TextContent.text = "Before browsing some new songs, drink some water, that's important for your body!";
+                        //        //var a = ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent");
+                        //        //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.ContinueButtonPressed(); });
+                        //        //_ContinueButton.onClick.AddListener(delegate () {
+                        //        //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "continueButtonPressedEvent")?.Invoke(_ResultsViewController);
+                        //        //});
+                        //        break;
+                        //    case DrinkWaterPanelMode.RESTART:
+                        //        _TextContent.text = "Before restarting this song, drink some water, that's important for your body!";
+                        //        //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.RestartButtonPressed(); });
+                        //        //_ContinueButton.onClick.AddListener(delegate () {
+                        //        //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent")?.Invoke(_ResultsViewController);
+                        //        //});
+                        //        break;
+                        //    default:
+                        //        break;
+                        //}
                     }
                 });
             }
@@ -117,10 +135,10 @@ namespace BeatSaberDrinkWater
         {
             if (_CustomMenu != null && _ResultsViewController != null)
             {
-                //ReflectionUtil.GetPrivateField<ResultsViewController>(_ResultsViewController, "")
                 _CurrentPanelMode = mode;
                 _CustomMenu.Present();
-                StartCoroutine(MakeButtonInteractableDelay(_ContinueButton, 5f, 0.1f, "0.0"));
+                _RefreshTextContent(mode);
+                StartCoroutine(MakeButtonInteractableDelay(_ContinueButton, PluginConfig.WaitDuration, 0.1f, "0.0"));
                 DisplayPanelNeeded = false;
             }
         }
@@ -142,14 +160,18 @@ namespace BeatSaberDrinkWater
             button.interactable = true;
         }
 
-        private void SetupUI()
+        private void _RefreshTextContent(DrinkWaterPanelMode mode)
+        {
+            if (_TextContent != null)
+                _TextContent.text = ((_CurrentPanelMode == DrinkWaterPanelMode.RESTART) ? ("Before restarting this song") : ("Before browsing some new songs")) + ", drink some water, that's important for your body!";
+        }
+
+        private void _SetupUI()
         {
             if (Initialized) return;
 
             _SetupDrinkWaterPanel();
             Initialized = true;
-            //TODO: Remove
-            DisplayPanelNeeded = true;
         }
     }
 }

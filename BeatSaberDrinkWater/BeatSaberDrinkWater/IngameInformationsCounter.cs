@@ -7,11 +7,12 @@ using UnityEngine.SceneManagement;
 
 namespace BeatSaberDrinkWater
 {
-    public class IngameTimeSpentClock : MonoBehaviour
+    public class IngameInformationsCounter : MonoBehaviour
     {
-        public static IngameTimeSpentClock Instance;
+        public static IngameInformationsCounter Instance;
         
-        private TimeSpan _TimeSpent;
+        public TimeSpan IngameTimeSpent;
+        public int CurrentPlaycount;
         private Coroutine _CUpdateIngameTimeSpentClock;
 
         public static void OnLoad()
@@ -19,7 +20,7 @@ namespace BeatSaberDrinkWater
             if (Instance != null) return;
             //Plugin.Log("Creating IngameTimeSpentClock.", Plugin.LogLevel.DebugOnly);
             //new GameObject("IngameTimeSpentClock").AddComponent<IngameTimeSpentClock>().transform.parent = parent;
-            new GameObject("IngameTimeSpentClock").AddComponent<IngameTimeSpentClock>();
+            new GameObject("IngameTimeSpentClock").AddComponent<IngameInformationsCounter>();
         }
 
         public void Awake()
@@ -30,7 +31,8 @@ namespace BeatSaberDrinkWater
                 Instance = this;
                 SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
                 DontDestroyOnLoad(gameObject);
-                _TimeSpent = new TimeSpan(0);
+                CurrentPlaycount = 0;
+                IngameTimeSpent = new TimeSpan(0);
             }
             else
                 Destroy(this);
@@ -57,13 +59,28 @@ namespace BeatSaberDrinkWater
         public IEnumerator UpdateIngameTimeSpentClock()
         {
             //Plugin.Log("IngameTimeSpentClock UpdateIngameTimeSpentClock function called.", Plugin.LogLevel.DebugOnly);
-            while (_TimeSpent != null)
+            while (IngameTimeSpent != null)
             {
-                _TimeSpent = _TimeSpent.Add(new TimeSpan(0, 0, 1));
-                Console.WriteLine("Current IngameTimeSpent is: " + _TimeSpent);
+                IngameTimeSpent = IngameTimeSpent.Add(new TimeSpan(0, 0, 1));
+                Console.WriteLine("Current IngameTimeSpent is: " + IngameTimeSpent);
                 
                 yield return new WaitForSeconds(1f);
             }
+        }
+
+        public void PlayerHasFinishedMap()
+        {
+            CurrentPlaycount += 1;
+        }
+
+        public void ResetTimeSpent()
+        {
+            IngameTimeSpent = new TimeSpan(0);
+        }
+
+        public void ResetPlaycount()
+        {
+            CurrentPlaycount = 0;
         }
     }
 }

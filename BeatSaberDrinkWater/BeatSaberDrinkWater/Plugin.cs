@@ -1,4 +1,5 @@
-﻿using BeatSaberDrinkWater.Utilities;
+﻿using BeatSaberDrinkWater.Settings;
+using BeatSaberDrinkWater.Utilities;
 using Harmony;
 using IllusionPlugin;
 using System;
@@ -17,8 +18,16 @@ namespace BeatSaberDrinkWater
             IngameTimeSpentClock.OnLoad();
             SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            PluginConfig.LoadOrCreateConfig();
             HarmonyInstance harmony = HarmonyInstance.Create("com.Shoko84.beatsaber.BeatSaberDrinkWater");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+        public void OnApplicationQuit()
+        {
+            SceneManager.activeSceneChanged -= SceneManagerOnActiveSceneChanged;
+            SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+            PluginConfig.SaveConfig();
         }
 
         private void SceneManagerOnActiveSceneChanged(Scene from, Scene to)
@@ -27,8 +36,8 @@ namespace BeatSaberDrinkWater
             {
                 try
                 {
-                    //SettingsUI.Instance.OnLoad();
-                    //if (PluginConfig.EnablePlugin)
+                    SettingsUI.Instance.OnLoad();
+                    if (PluginConfig.EnablePlugin)
                         DrinkWaterPanel.Instance.OnLoad();
                 }
                 catch (Exception e)
@@ -40,12 +49,6 @@ namespace BeatSaberDrinkWater
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-        }
-
-        public void OnApplicationQuit()
-        {
-            SceneManager.activeSceneChanged -= SceneManagerOnActiveSceneChanged;
-            SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
         }
 
         public void OnLevelWasLoaded(int level)

@@ -11,7 +11,7 @@ namespace BeatSaberDrinkWater
     public class Plugin : IPlugin
     {
         public string Name => "BeatSaberDrinkWater";
-        public string Version => "0.0.1";
+        public string Version => "0.9.0";
         public void OnApplicationStart()
         {
             IngameInformationsCounter.OnLoad();

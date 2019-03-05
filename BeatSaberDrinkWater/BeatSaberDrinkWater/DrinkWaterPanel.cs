@@ -24,8 +24,9 @@ namespace BeatSaberDrinkWater
 
         private CustomMenu _CustomMenu = null;
         private CustomViewController _CustomViewController = null;
-        private SoloFreePlayFlowCoordinator _Sfpfc;
-        private ResultsViewController _ResultsViewController;
+        private UniGifImage _UniGifImage = null;
+        private RawImage _RawImage = null;
+        private string[] _GifRotation;
 
         private DrinkWaterPanelMode _CurrentPanelMode;
         private TextMeshProUGUI _TextContent;
@@ -34,37 +35,34 @@ namespace BeatSaberDrinkWater
         public bool Initialized = false;
         public bool DisplayPanelNeeded = false;
 
-        private static DrinkWaterPanel _instance = null;
+        private static DrinkWaterPanel _Instance = null;
         public static DrinkWaterPanel Instance
         {
             get
             {
-                if (!_instance)
+                if (!_Instance)
                 {
-                    _instance = new GameObject("[BeatSaverDrinkWater] DrinkWaterPanel").AddComponent<DrinkWaterPanel>();
-                    DontDestroyOnLoad(_instance.gameObject);
+                    _Instance = new GameObject("[BeatSaverDrinkWater] DrinkWaterPanel").AddComponent<DrinkWaterPanel>();
+                    DontDestroyOnLoad(_Instance.gameObject);
                 }
-                return _instance;
+                return _Instance;
             }
             private set
             {
-                _instance = value;
+                _Instance = value;
             }
         }
 
         public void OnLoad()
         {
             Initialized = false;
-            _Sfpfc = Resources.FindObjectsOfTypeAll<SoloFreePlayFlowCoordinator>().FirstOrDefault();
-            if (_Sfpfc != null)
-                _ResultsViewController = ReflectionUtil.GetPrivateField<ResultsViewController>(_Sfpfc, "_resultsViewController");
+            _GifRotation = new string[] { "https://media1.tenor.com/images/013d560bab2b0fc56a2bc43b8262b4ed/tenor.gif", "https://i.giphy.com/zWOnltJgKVlsc.gif",
+                                          "https://i.giphy.com/3ohhwF34cGDoFFhRfy.gif", "https://i.giphy.com/eRBa4tzlbNwE8.gif" };
             _SetupUI();
         }
 
         public void OnMapFinished()
         {
-            //TODO: Remove
-            //DisplayPanelNeeded = true;
             IngameInformationsCounter.Instance.PlayerHasFinishedMap();
             if (PluginConfig.EnableByPlaytime && IngameInformationsCounter.Instance.IngameTimeSpent.TotalMinutes >= PluginConfig.PlaytimeBeforeWarning)
             {
@@ -92,17 +90,29 @@ namespace BeatSaberDrinkWater
                 {
                     if (firstActivation && type == VRUI.VRUIViewController.ActivationType.AddedToHierarchy)
                     {
-                        _TextContent = _CustomViewController.CreateText("", new Vector2(0, 20f));
+                        _TextContent = _CustomViewController.CreateText("", new Vector2(0, 28f));
                         _TextContent.alignment = TextAlignmentOptions.Center;
                         _TextContent.fontSize = 5;
                         _TextContent.enableWordWrapping = false;
-                        _ContinueButton = _CustomViewController.CreateUIButton("CreditsButton", new Vector2(0, -20f), new Vector2(37f, 10f),
+                        _ContinueButton = _CustomViewController.CreateUIButton("CreditsButton", new Vector2(0, -28f), new Vector2(37f, 10f),
                                                                                null, "I understand!");
                         _ContinueButton.ToggleWordWrapping(false);
                         _ContinueButton.SetButtonTextSize(4);
-                        _ContinueButton.onClick.AddListener(delegate () { _CustomMenu.Dismiss(); });
+                        _ContinueButton.onClick.AddListener(delegate () { _CustomMenu.Dismiss(); Destroy(_CustomViewController.gameObject, 1); _CustomMenu = null; _CustomViewController = null; });
 
                         _RefreshTextContent(_CurrentPanelMode);
+
+                        GameObject go = new GameObject("[BeatSaberDrinkWater] PreviewGif");
+                        _RawImage = go.AddComponent<RawImage>();
+                        _RawImage.material = Instantiate(Resources.FindObjectsOfTypeAll<Material>().Where(m => m.name == "UINoGlow").FirstOrDefault());
+                        go.transform.SetParent(_CustomViewController.transform, false);
+                        go.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                        go.GetComponent<RectTransform>().sizeDelta = new Vector2(30, 30);
+                        _UniGifImage = go.AddComponent<UniGifImage>();
+                        UniGifImageAspectController ugiac = go.AddComponent<UniGifImageAspectController>();
+                        _UniGifImage.SetPrivateField("m_imgAspectCtrl", ugiac);
+
+                        StartCoroutine(_DisplayGifFromRotation());
 
                         //switch (_CurrentPanelMode)
                         //{
@@ -133,9 +143,10 @@ namespace BeatSaberDrinkWater
 
         public void ShowDrinkWaterPanel(DrinkWaterPanelMode mode)
         {
-            if (_CustomMenu != null && _ResultsViewController != null)
+            if (_CustomMenu != null && _CustomViewController != null)
             {
                 _CurrentPanelMode = mode;
+                StartCoroutine(_DisplayGifFromRotation());
                 _CustomMenu.Present();
                 _RefreshTextContent(mode);
                 StartCoroutine(MakeButtonInteractableDelay(_ContinueButton, PluginConfig.WaitDuration, 0.1f, "0.0"));
@@ -147,7 +158,7 @@ namespace BeatSaberDrinkWater
         {
             string buttonTextContent = button.GetComponentInChildren<TextMeshProUGUI>().text;
             if (showInButton)
-                button.SetButtonText(buttonTextContent + " (" + duration.ToString(format) + ")");
+                button.SetButtonText(buttonTextContent + ((duration > 0) ? (" (" + duration.ToString(format) + ")") : ("")));
             button.interactable = false;
             while (duration > 0)
             {
@@ -158,6 +169,25 @@ namespace BeatSaberDrinkWater
                     button.SetButtonText(buttonTextContent + ((duration > 0) ? (" (" + duration.ToString(format) + ")") : ("")));
             }
             button.interactable = true;
+        }
+
+        private IEnumerator _DisplayGifFromRotation()
+        {
+            if (_UniGifImage != null)
+            {
+                Coroutine gifCoroutine = null;
+                _RawImage.enabled = false;
+                try
+                {
+                    gifCoroutine = StartCoroutine(_UniGifImage.SetGifFromUrlCoroutine(_GifRotation[UnityEngine.Random.Range(0, _GifRotation.Length)]));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception catched on displaying gif: " + e);
+                }
+                yield return gifCoroutine;
+                _RawImage.enabled = true;
+            }
         }
 
         private void _RefreshTextContent(DrinkWaterPanelMode mode)

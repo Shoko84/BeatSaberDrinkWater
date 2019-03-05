@@ -11,21 +11,21 @@ namespace BeatSaberDrinkWater.Settings
     {
         public bool Initialized = false;
 
-        private static SettingsUI _instance = null;
+        private static SettingsUI _Instance = null;
         public static SettingsUI Instance
         {
             get
             {
-                if (!_instance)
+                if (!_Instance)
                 {
-                    _instance = new GameObject("[BeatSaberDrinkWater] SettingsUI").AddComponent<SettingsUI>();
-                    DontDestroyOnLoad(_instance.gameObject);
+                    _Instance = new GameObject("[BeatSaberDrinkWater] SettingsUI").AddComponent<SettingsUI>();
+                    DontDestroyOnLoad(_Instance.gameObject);
                 }
-                return _instance;
+                return _Instance;
             }
             private set
             {
-                _instance = value;
+                _Instance = value;
             }
         }
 

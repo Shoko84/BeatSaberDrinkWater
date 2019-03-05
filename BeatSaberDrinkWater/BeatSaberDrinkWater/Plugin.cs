@@ -55,7 +55,10 @@ namespace BeatSaberDrinkWater
                 try
                 {
                     if (PluginConfig.EnablePlugin)
+                    {
+                        DrinkWaterPanel.Instance.OnLoad();
                         DrinkWaterPanel.Instance.OnMapFinished();
+                    }
                 }
                 catch (Exception e)
                 {

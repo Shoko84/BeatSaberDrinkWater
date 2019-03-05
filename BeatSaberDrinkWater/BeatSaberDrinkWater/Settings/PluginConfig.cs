@@ -12,6 +12,7 @@ namespace BeatSaberDrinkWater.Settings
     public class PluginConfig
     {
         public static bool EnablePlugin = true;
+        public static bool ShowGIFs = true;
         public static int WaitDuration = 5;
         public static bool EnableByPlaytime = true;
         public static bool EnableByPlaycount = false;
@@ -31,6 +32,15 @@ namespace BeatSaberDrinkWater.Settings
             }
             else
                 EnablePlugin = ModPrefs.GetBool("BeatSaberDrinkWater", "EnablePlugin", true, true);
+
+            //ShowGIFs property
+            if (!ModPrefs.HasKey("BeatSaberDrinkWater", "ShowGIFs"))
+            {
+                ModPrefs.SetBool("BeatSaberDrinkWater", "ShowGIFs", true);
+                Console.WriteLine("Created config");
+            }
+            else
+                EnablePlugin = ModPrefs.GetBool("BeatSaberDrinkWater", "ShowGIFs", true, true);
 
             //WaitDuration property
             if (!ModPrefs.HasKey("BeatSaberDrinkWater", "WaitDuration"))
@@ -81,6 +91,7 @@ namespace BeatSaberDrinkWater.Settings
         public static void SaveConfig()
         {
             ModPrefs.SetBool("BeatSaberDrinkWater", "EnablePlugin", EnablePlugin);
+            ModPrefs.SetBool("BeatSaberDrinkWater", "ShowGIFs", ShowGIFs);
             ModPrefs.SetInt("BeatSaberDrinkWater", "WaitDuration", WaitDuration);
             ModPrefs.SetBool("BeatSaberDrinkWater", "EnableByPlaytime", EnableByPlaytime);
             ModPrefs.SetBool("BeatSaberDrinkWater", "EnableByPlaycount", EnableByPlaycount);

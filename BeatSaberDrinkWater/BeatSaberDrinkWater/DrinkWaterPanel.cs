@@ -83,6 +83,7 @@ namespace BeatSaberDrinkWater
 
             _CustomMenu = BeatSaberUI.CreateCustomMenu<CustomMenu>("Drink some water!");
             _CustomViewController = BeatSaberUI.CreateViewController<CustomViewController>();
+            _CustomViewController.name = "DrinkWaterPanel";
 
             if (_CustomMenu != null && _CustomViewController != null)
             {
@@ -102,17 +103,19 @@ namespace BeatSaberDrinkWater
 
                         _RefreshTextContent(_CurrentPanelMode);
 
-                        GameObject go = new GameObject("[BeatSaberDrinkWater] PreviewGif");
-                        _RawImage = go.AddComponent<RawImage>();
-                        _RawImage.material = Instantiate(Resources.FindObjectsOfTypeAll<Material>().Where(m => m.name == "UINoGlow").FirstOrDefault());
-                        go.transform.SetParent(_CustomViewController.transform, false);
-                        go.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-                        go.GetComponent<RectTransform>().sizeDelta = new Vector2(30, 30);
-                        _UniGifImage = go.AddComponent<UniGifImage>();
-                        UniGifImageAspectController ugiac = go.AddComponent<UniGifImageAspectController>();
-                        _UniGifImage.SetPrivateField("m_imgAspectCtrl", ugiac);
-
-                        StartCoroutine(_DisplayGifFromRotation());
+                        if (PluginConfig.ShowGIFs)
+                        {
+                            GameObject go = new GameObject("[BeatSaberDrinkWater] PreviewGif");
+                            _RawImage = go.AddComponent<RawImage>();
+                            _RawImage.material = Instantiate(Resources.FindObjectsOfTypeAll<Material>().Where(m => m.name == "UINoGlow").FirstOrDefault());
+                            go.transform.SetParent(_CustomViewController.transform, false);
+                            go.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                            go.GetComponent<RectTransform>().sizeDelta = new Vector2(30, 30);
+                            _UniGifImage = go.AddComponent<UniGifImage>();
+                            UniGifImageAspectController ugiac = go.AddComponent<UniGifImageAspectController>();
+                            _UniGifImage.SetPrivateField("m_imgAspectCtrl", ugiac);
+                            StartCoroutine(_DisplayGifFromRotation());
+                        }
 
                         //switch (_CurrentPanelMode)
                         //{
@@ -146,7 +149,8 @@ namespace BeatSaberDrinkWater
             if (_CustomMenu != null && _CustomViewController != null)
             {
                 _CurrentPanelMode = mode;
-                StartCoroutine(_DisplayGifFromRotation());
+                if (PluginConfig.ShowGIFs)
+                    StartCoroutine(_DisplayGifFromRotation());
                 _CustomMenu.Present();
                 _RefreshTextContent(mode);
                 StartCoroutine(MakeButtonInteractableDelay(_ContinueButton, PluginConfig.WaitDuration, 0.1f, "0.0"));

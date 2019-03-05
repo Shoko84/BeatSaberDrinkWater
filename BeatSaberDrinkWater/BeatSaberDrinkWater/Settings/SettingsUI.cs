@@ -44,7 +44,10 @@ namespace BeatSaberDrinkWater.Settings
             var enablePlugin = customExitSubMenu.AddBool("Enable", "Enable or not the plugin");
             enablePlugin.GetValue += delegate { return PluginConfig.EnablePlugin; };
             enablePlugin.SetValue += delegate (bool value) { PluginConfig.EnablePlugin = value; PluginConfig.SaveConfig(); };
-            var waitDuration = customExitSubMenu.AddInt("Wait duration", "Waiting time in seconds before skipping the warning", 0, 30, 1);
+            var showGIFs = customExitSubMenu.AddBool("Show GIFs", "Display or not GIFs on the warning panel");
+            showGIFs.GetValue += delegate { return PluginConfig.ShowGIFs; };
+            showGIFs.SetValue += delegate (bool value) { PluginConfig.ShowGIFs = value; PluginConfig.SaveConfig(); };
+            var waitDuration = customExitSubMenu.AddInt("Wait duration", "Waiting time in seconds before skipping the warning panel", 0, 30, 1);
             waitDuration.GetValue += delegate { return PluginConfig.WaitDuration; };
             waitDuration.SetValue += delegate (int value) { PluginConfig.WaitDuration = value; PluginConfig.SaveConfig(); };
             var enableByPlaytime = customExitSubMenu.AddBool("Enable by playtime", "Enable the plugin depending of the playtime");

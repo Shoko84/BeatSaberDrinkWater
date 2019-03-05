@@ -58,8 +58,6 @@ namespace BeatSaberDrinkWater
             while (IngameTimeSpent != null)
             {
                 IngameTimeSpent = IngameTimeSpent.Add(new TimeSpan(0, 0, 1));
-                Console.WriteLine("Current IngameTimeSpent is: " + IngameTimeSpent);
-                
                 yield return new WaitForSeconds(1f);
             }
         }

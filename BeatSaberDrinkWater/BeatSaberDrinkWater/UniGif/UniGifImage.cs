@@ -214,7 +214,7 @@ public class UniGifImage : MonoBehaviour
         }
 
         // Load file
-        using (WWW www = new WWW(path))
+        using (UnityWebRequest www = new UnityWebRequest(path))
         {
             yield return www;
 
@@ -229,7 +229,9 @@ public class UniGifImage : MonoBehaviour
             nowState = State.Loading;
 
             // Get GIF textures
-            yield return StartCoroutine(UniGif.GetTextureListCoroutine(www.bytes, (gifTexList, loopCount, width, height) =>
+            www.downloadHandler = new DownloadHandlerBuffer();
+            yield return www.SendWebRequest();
+            yield return StartCoroutine(UniGif.GetTextureListCoroutine(www.downloadHandler.data, (gifTexList, loopCount, width, height) =>
             {
                 if (gifTexList != null)
                 {

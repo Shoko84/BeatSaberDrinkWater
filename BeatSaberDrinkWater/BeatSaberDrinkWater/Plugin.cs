@@ -14,7 +14,6 @@ namespace BeatSaberDrinkWater
         public string Version => "0.0.1";
         public void OnApplicationStart()
         {
-            TimeSpentClock.OnLoad();
             IngameInformationsCounter.OnLoad();
             SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
@@ -39,10 +38,6 @@ namespace BeatSaberDrinkWater
                     SettingsUI.Instance.OnLoad();
                     if (PluginConfig.EnablePlugin)
                         DrinkWaterPanel.Instance.OnLoad();
-                    else if (DrinkWaterPanel.Instance != null)
-                    {
-                        //Clean gameobjects created by the plugin
-                    }
                 }
                 catch (Exception e)
                 {

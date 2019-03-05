@@ -116,27 +116,6 @@ namespace BeatSaberDrinkWater
                             _UniGifImage.SetPrivateField("m_imgAspectCtrl", ugiac);
                             StartCoroutine(_DisplayGifFromRotation());
                         }
-
-                        //switch (_CurrentPanelMode)
-                        //{
-                        //    case DrinkWaterPanelMode.CONTINUE:
-                        //        _TextContent.text = "Before browsing some new songs, drink some water, that's important for your body!";
-                        //        //var a = ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent");
-                        //        //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.ContinueButtonPressed(); });
-                        //        //_ContinueButton.onClick.AddListener(delegate () {
-                        //        //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "continueButtonPressedEvent")?.Invoke(_ResultsViewController);
-                        //        //});
-                        //        break;
-                        //    case DrinkWaterPanelMode.RESTART:
-                        //        _TextContent.text = "Before restarting this song, drink some water, that's important for your body!";
-                        //        //_ContinueButton.onClick.AddListener(delegate () { _ResultsViewController.RestartButtonPressed(); });
-                        //        //_ContinueButton.onClick.AddListener(delegate () {
-                        //        //    ReflectionUtil.GetPrivateField<Action<ResultsViewController>>(_ResultsViewController, "restartButtonPressedEvent")?.Invoke(_ResultsViewController);
-                        //        //});
-                        //        break;
-                        //    default:
-                        //        break;
-                        //}
                     }
                 });
             }

@@ -18,8 +18,6 @@ namespace BeatSaberDrinkWater
         public static void OnLoad()
         {
             if (Instance != null) return;
-            //Plugin.Log("Creating IngameTimeSpentClock.", Plugin.LogLevel.DebugOnly);
-            //new GameObject("IngameTimeSpentClock").AddComponent<IngameTimeSpentClock>().transform.parent = parent;
             new GameObject("IngameTimeSpentClock").AddComponent<IngameInformationsCounter>();
         }
 
@@ -27,7 +25,6 @@ namespace BeatSaberDrinkWater
         {
             if (Instance == null)
             {
-                //Plugin.Log("IngameTimeSpentClock awake.", Plugin.LogLevel.DebugOnly);
                 Instance = this;
                 SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
                 DontDestroyOnLoad(gameObject);
@@ -58,7 +55,6 @@ namespace BeatSaberDrinkWater
 
         public IEnumerator UpdateIngameTimeSpentClock()
         {
-            //Plugin.Log("IngameTimeSpentClock UpdateIngameTimeSpentClock function called.", Plugin.LogLevel.DebugOnly);
             while (IngameTimeSpent != null)
             {
                 IngameTimeSpent = IngameTimeSpent.Add(new TimeSpan(0, 0, 1));

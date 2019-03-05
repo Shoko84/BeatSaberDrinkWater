@@ -1,4 +1,6 @@
 ﻿using BeatSaberDrinkWater.Settings;
+using BeatSaberDrinkWater.UniGif;
+using BeatSaberDrinkWater.UniGif.Utility;
 using BeatSaberDrinkWater.Utilities;
 using CustomUI.BeatSaber;
 using System;

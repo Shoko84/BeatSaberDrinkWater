@@ -2,14 +2,14 @@
   "$schema": "https://raw.githubusercontent.com/nike4613/ModSaber-MetadataFileSchema/master/Schema.json",
   "author": "Shoko84",
   "description": "Displays a panel to remind you to drink some water after playing for a long time/amount of songs!",
-  "gameVersion": "1.6.0",
+  "gameVersion": "1.6.2",
   "id": "DrinkWater",
   "name": "Drink Water",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "dependsOn": {
-    "BeatSaberMarkupLanguage": "^1.1.0",
-    "BSIPA": "^3.13.4",
-    "BS Utils": "^1.4.0"
+    "BeatSaberMarkupLanguage": "^1.1.2",
+    "BSIPA": "^3.13.7",
+    "BS Utils": "^1.4.1"
   },
   "features": [],
   "links": {

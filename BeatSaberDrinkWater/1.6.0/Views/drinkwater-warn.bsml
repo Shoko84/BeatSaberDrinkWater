@@ -1,0 +1,16 @@
+﻿<bg>
+  <vertical child-control-height='false'>
+    <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+      <text text='Drink some water!' align='Center' font-size='8'/>
+    </horizontal>
+    <horizontal vertical-fit='PreferredSize'>
+      <text id='text-content' align='Center'/>
+    </horizontal>
+    <horizontal horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
+      <raw-image id='gif-image' pref-width='~pref-width-val' pref-height='~pref-height-val' />
+    </horizontal>
+    <horizontal vertical-fit='PreferredSize'>
+      <button id='continue-btn' text='I understand!' on-click='continue-btn-click' />
+    </horizontal>
+  </vertical>
+</bg>

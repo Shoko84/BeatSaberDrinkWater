@@ -1,0 +1,9 @@
+﻿<scrollable-settings-container>
+  <bool-setting text='Enabled' value='enabled-bool' hover-hint='Enable or not the plugin'/>
+  <bool-setting text='Show GIFs' value='show-gif-bool' hover-hint='Display or not GIFs on the warning panel'/>
+  <increment-setting text='Wait duration' value='wait-duration-int' min='0' max='30' increment='1' integer-only='true' hover-hint='Waiting time in seconds before skipping the warning panel'/>
+  <bool-setting text='Enable by playtime' value='enable-playtime-bool' hover-hint='Enable the plugin depending of the playtime'/>
+  <bool-setting text='Enable by play count' value='enable-playtime-count-bool' hover-hint='Enable the plugin depending of the play count'/>
+  <increment-setting text='Playtime warning' value='playtime-warning-int' min='1' max='30' increment='1' integer-only='true' hover-hint="How much playtime before being warned in minutes ('Enable by playtime' must be true)"/>
+  <increment-setting text='Play count warning' value='playcount-warning-int' min='1' max='5' increment='1' integer-only='true' hover-hint="How much play count before being warned ('Enable by play count' must be true)"/>
+</scrollable-settings-container>

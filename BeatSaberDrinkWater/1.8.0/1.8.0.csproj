@@ -127,6 +127,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "DrinkWater.dll" "$(BeatSaber)\Plugins"</PostBuildEvent>
+    <PostBuildEvent>copy "DrinkWater.dll" "$(BeatSaberDir)\Plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

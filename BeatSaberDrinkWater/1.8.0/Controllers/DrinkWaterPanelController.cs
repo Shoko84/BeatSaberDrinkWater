@@ -47,9 +47,9 @@ namespace DrinkWater.Controllers
 
         
 
-        protected override void DidActivate(bool firstActivation, ActivationType type)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
-            base.DidActivate(firstActivation, type);
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
             if (firstActivation && PluginConfig.Instance.EnablePlugin && PluginConfig.Instance.ShowGIFs)
             {
                 UniGif = rawImageGif.gameObject.AddComponent<UniGifImage>();
